@@ -1,6 +1,7 @@
 import 'package:ajuda_bem/core/theme/app_theme.dart';
 import 'package:ajuda_bem/core/widgets/app_text_field.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -14,7 +15,7 @@ void main() {
           body: AppTextField(
             label: 'E-mail:',
             hintText: 'E-mail',
-            prefixIcon: Icons.mail_outline,
+            prefixIconAsset: 'assets/icons/register/email.svg',
             keyboardType: TextInputType.emailAddress,
             onChanged: (text) => value = text,
           ),
@@ -35,7 +36,7 @@ void main() {
     expect(textField.style?.fontWeight, FontWeight.w400);
     expect(textField.style?.color, const Color(0xFFA2A2A2));
     expect(textField.decoration?.hintText, 'E-mail');
-    expect(find.byIcon(Icons.mail_outline), findsOneWidget);
+    expect(find.byType(SvgPicture), findsOneWidget);
 
     await tester.enterText(find.byType(TextField), 'ong@ajudabem.com');
     expect(value, 'ong@ajudabem.com');

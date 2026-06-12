@@ -1,0 +1,30 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+
+import 'ajuda_bem_logo.dart';
+
+class AuthAppBar extends StatelessWidget implements PreferredSizeWidget {
+  const AuthAppBar({super.key});
+
+  @override
+  Size get preferredSize => const Size.fromHeight(64);
+
+  @override
+  Widget build(BuildContext context) {
+    return AppBar(
+      toolbarHeight: preferredSize.height,
+      centerTitle: true,
+      title: const AjudaBemLogo(),
+      actions: [
+        Padding(
+          padding: const EdgeInsets.only(right: 24),
+          child: SvgPicture.asset(
+            'assets/icons/notify_icon.svg',
+            width: 32,
+            height: 32,
+          ),
+        ),
+      ],
+    );
+  }
+}

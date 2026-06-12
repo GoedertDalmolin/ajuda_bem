@@ -4,8 +4,10 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../../../core/routes/app_routes.dart';
 import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/app_text_field.dart';
+import '../../../../core/widgets/auth_app_bar.dart';
 import '../stores/login_store.dart';
 
 class LoginPage extends StatelessWidget {
@@ -20,21 +22,7 @@ class LoginPage extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      appBar: AppBar(
-        toolbarHeight: 64,
-        centerTitle: true,
-        title: const _LoginLogo(),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 24),
-            child: SvgPicture.asset(
-              'assets/icons/notify_icon.svg',
-              width: 32,
-              height: 32,
-            ),
-          ),
-        ],
-      ),
+      appBar: const AuthAppBar(),
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(
@@ -74,7 +62,7 @@ class LoginPage extends StatelessWidget {
                         AppTextField(
                           label: 'E-mail:',
                           hintText: 'E-mail',
-                          prefixIcon: Icons.mail_outline,
+                          prefixIconAsset: 'assets/icons/register/email.svg',
                           keyboardType: TextInputType.emailAddress,
                           onChanged: store.setEmail,
                         ),
@@ -83,7 +71,8 @@ class LoginPage extends StatelessWidget {
                           builder: (_) => AppTextField(
                             label: 'Senha:',
                             hintText: 'Senha',
-                            prefixIcon: Icons.lock_outline,
+                            prefixIconAsset:
+                                'assets/icons/register/password.svg',
                             obscureText: store.isPasswordObscured,
                             onChanged: store.setPassword,
                             suffixIcon: IconButton(
@@ -132,7 +121,8 @@ class LoginPage extends StatelessWidget {
                             AppTextButton(
                               label: 'Criar conta',
                               icon: Icons.person_add_alt_outlined,
-                              onPressed: () {},
+                              onPressed: () =>
+                                  Modular.to.pushNamed(AppRoutes.register),
                             ),
                             AppTextButton(
                               label: 'Esqueci minha senha',
@@ -149,36 +139,6 @@ class LoginPage extends StatelessWidget {
             ),
           ),
         ),
-      ),
-    );
-  }
-}
-
-class _LoginLogo extends StatelessWidget {
-  const _LoginLogo();
-
-  @override
-  Widget build(BuildContext context) {
-    return RichText(
-      text: TextSpan(
-        style: GoogleFonts.manrope(
-          color: const Color(0xFF232323),
-          fontSize: 24,
-          fontWeight: FontWeight.w800,
-          letterSpacing: 0,
-        ),
-        children: [
-          const TextSpan(text: 'Ajuda'),
-          TextSpan(
-            text: 'Bem',
-            style: GoogleFonts.manrope(
-              color: Theme.of(context).colorScheme.primary,
-              fontSize: 24,
-              fontWeight: FontWeight.w800,
-              letterSpacing: 0,
-            ),
-          ),
-        ],
       ),
     );
   }

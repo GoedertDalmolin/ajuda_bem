@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AppTextField extends StatelessWidget {
   const AppTextField({
     required this.label,
     required this.hintText,
-    required this.prefixIcon,
     super.key,
+    this.prefixIcon,
+    this.prefixIconAsset,
     this.keyboardType,
     this.obscureText = false,
     this.suffixIcon,
@@ -15,7 +17,8 @@ class AppTextField extends StatelessWidget {
 
   final String label;
   final String hintText;
-  final IconData prefixIcon;
+  final IconData? prefixIcon;
+  final String? prefixIconAsset;
   final TextInputType? keyboardType;
   final bool obscureText;
   final Widget? suffixIcon;
@@ -24,6 +27,7 @@ class AppTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final color = Theme.of(context).colorScheme.primary;
+    final hasPrefixIcon = prefixIcon != null || prefixIconAsset != null;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -52,13 +56,31 @@ class AppTextField extends StatelessWidget {
             ),
             decoration: InputDecoration(
               hintText: hintText,
-              prefixIcon: Icon(prefixIcon, size: 18),
+              prefixIcon: _buildPrefixIcon(),
               suffixIcon: suffixIcon,
-              contentPadding: EdgeInsets.zero,
+              contentPadding: EdgeInsets.symmetric(
+                horizontal: hasPrefixIcon ? 0 : 16,
+              ),
             ),
           ),
         ),
       ],
     );
+  }
+
+  Widget? _buildPrefixIcon() {
+    if (prefixIconAsset != null) {
+      return Center(
+        widthFactor: 1,
+        heightFactor: 1,
+        child: SvgPicture.asset(prefixIconAsset!, width: 18, height: 18),
+      );
+    }
+
+    if (prefixIcon != null) {
+      return Icon(prefixIcon, size: 18);
+    }
+
+    return null;
   }
 }

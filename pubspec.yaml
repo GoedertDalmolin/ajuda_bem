@@ -64,6 +64,10 @@ flutter:
   assets:
     - assets/icons/google_icon.svg
     - assets/icons/notify_icon.svg
+    - assets/icons/register/email.svg
+    - assets/icons/register/password.svg
+    - assets/icons/register/phone.svg
+    - assets/icons/register/user.svg
 
   # To add assets to your application, add an assets section, like this:
   # assets:

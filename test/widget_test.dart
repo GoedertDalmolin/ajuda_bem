@@ -23,7 +23,7 @@ void main() {
     expect(find.text('Ou'), findsOneWidget);
     expect(find.text('Faça login com o Google'), findsOneWidget);
     expect(find.text('Faça login com o Facebook'), findsOneWidget);
-    expect(find.byType(SvgPicture), findsNWidgets(2));
+    expect(find.byType(SvgPicture), findsWidgets);
     expect(find.text('Criar conta'), findsOneWidget);
     expect(find.text('Esqueci minha senha'), findsOneWidget);
     expect(find.byType(TextField), findsNWidgets(2));
@@ -45,5 +45,17 @@ void main() {
     expect(enter.style?.fontSize, 16);
     expect(enter.style?.fontWeight, FontWeight.w700);
     expect(enter.style?.color, Colors.white);
+
+    await tester.ensureVisible(find.text('Criar conta'));
+    await tester.tap(find.text('Criar conta'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Crie sua conta no AjudaBem.'), findsOneWidget);
+    expect(find.text('Nome:'), findsOneWidget);
+    expect(find.text('Telefone:'), findsOneWidget);
+    expect(find.text('Confirme sua senha:'), findsOneWidget);
+    expect(find.text('Cadastrar'), findsOneWidget);
+    expect(find.byType(TextField), findsNWidgets(5));
+    expect(find.byType(SvgPicture), findsWidgets);
   });
 }
