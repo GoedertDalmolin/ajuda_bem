@@ -1,0 +1,3 @@
+class SignInUsecase {
+  const SignInUsecase();
+}
