@@ -1,3 +1,9 @@
+import 'package:ajuda_bem/core/errors/app_exception.dart';
+import 'package:ajuda_bem/modules/auth/domain/entities/auth_session.dart';
+import 'package:ajuda_bem/modules/auth/domain/entities/register_user_params.dart';
+import 'package:ajuda_bem/modules/auth/domain/entities/sign_in_params.dart';
+import 'package:ajuda_bem/modules/auth/domain/repositories/auth_repository.dart';
+import 'package:ajuda_bem/modules/auth/domain/usecases/register_user_usecase.dart';
 import 'package:ajuda_bem/modules/auth/presentation/stores/register_store.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mobx/mobx.dart';
@@ -5,7 +11,7 @@ import 'package:mobx/mobx.dart';
 void main() {
   group('RegisterStore', () {
     test('starts with empty fields and disabled submit', () {
-      final store = RegisterStore();
+      final store = _store();
 
       expect(store.name, isEmpty);
       expect(store.email, isEmpty);
@@ -20,7 +26,7 @@ void main() {
     });
 
     test('updates all form fields', () {
-      final store = RegisterStore();
+      final store = _store();
 
       store.setName('Instituto Esperança');
       store.setEmail('contato@instituto.org');
@@ -76,7 +82,7 @@ void main() {
     });
 
     test('keeps passwordsMatch false while one password field is empty', () {
-      final store = RegisterStore();
+      final store = _store();
 
       store.setPassword('123456');
       expect(store.passwordsMatch, isFalse);
@@ -87,7 +93,7 @@ void main() {
     });
 
     test('toggles password visibility controls', () {
-      final store = RegisterStore();
+      final store = _store();
 
       store.togglePasswordVisibility();
       store.toggleConfirmPasswordVisibility();
@@ -108,15 +114,74 @@ void main() {
 
       expect(values, [false, true, false]);
     });
+
+    test('submits normalized data through the registration usecase', () async {
+      final repository = _FakeAuthRepository();
+      final store = _validStore(repository)
+        ..setName('  Instituto Esperança  ')
+        ..setEmail('  CONTATO@INSTITUTO.ORG ');
+
+      final success = await store.submit();
+
+      expect(success, isTrue);
+      expect(store.errorMessage, isNull);
+      expect(store.isLoading, isFalse);
+      expect(repository.receivedParams?.name, 'Instituto Esperança');
+      expect(repository.receivedParams?.email, 'contato@instituto.org');
+      expect(repository.receivedParams?.phone, '(11) 99999-9999');
+      expect(repository.receivedParams?.password, '123456');
+    });
+
+    test('exposes the registration error to the page', () async {
+      final repository = _FakeAuthRepository(
+        error: const AppException('E-mail já cadastrado.'),
+      );
+      final store = _validStore(repository);
+
+      final success = await store.submit();
+
+      expect(success, isFalse);
+      expect(store.errorMessage, 'E-mail já cadastrado.');
+      expect(store.isLoading, isFalse);
+    });
   });
 }
 
-RegisterStore _validStore() {
-  return RegisterStore()
+RegisterStore _store([_FakeAuthRepository? repository]) {
+  return RegisterStore(
+    RegisterUserUsecase(repository ?? _FakeAuthRepository()),
+  );
+}
+
+RegisterStore _validStore([_FakeAuthRepository? repository]) {
+  return _store(repository)
     ..setName('Instituto Esperança')
     ..setEmail('contato@instituto.org')
     ..setPhone('(11) 99999-9999')
     ..setPassword('123456')
     ..setConfirmPassword('123456')
     ..setAcceptedTerms(true);
+}
+
+class _FakeAuthRepository implements AuthRepository {
+  _FakeAuthRepository({this.error});
+
+  final Object? error;
+  RegisterUserParams? receivedParams;
+
+  @override
+  Future<AuthSession> register(RegisterUserParams params) async {
+    receivedParams = params;
+
+    if (error != null) {
+      throw error!;
+    }
+
+    return const AuthSession(name: 'Instituto Esperança', token: 'token');
+  }
+
+  @override
+  Future<AuthSession> signIn(SignInParams params) {
+    throw UnimplementedError();
+  }
 }

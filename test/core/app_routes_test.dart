@@ -5,5 +5,7 @@ void main() {
   test('auth route is the app entrypoint', () {
     expect(AppRoutes.auth, '/');
     expect(AppRoutes.register, '/register/');
+    expect(AppRoutes.recoverAccess, '/recover-access/');
+    expect(AppRoutes.profile, '/profile/');
   });
 }

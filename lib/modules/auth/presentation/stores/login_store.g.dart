@@ -68,6 +68,74 @@ mixin _$LoginStore on LoginStoreBase, Store {
     });
   }
 
+  late final _$isLoadingAtom = Atom(
+    name: 'LoginStoreBase.isLoading',
+    context: context,
+  );
+
+  @override
+  bool get isLoading {
+    _$isLoadingAtom.reportRead();
+    return super.isLoading;
+  }
+
+  @override
+  set isLoading(bool value) {
+    _$isLoadingAtom.reportWrite(value, super.isLoading, () {
+      super.isLoading = value;
+    });
+  }
+
+  late final _$errorMessageAtom = Atom(
+    name: 'LoginStoreBase.errorMessage',
+    context: context,
+  );
+
+  @override
+  String? get errorMessage {
+    _$errorMessageAtom.reportRead();
+    return super.errorMessage;
+  }
+
+  @override
+  set errorMessage(String? value) {
+    _$errorMessageAtom.reportWrite(value, super.errorMessage, () {
+      super.errorMessage = value;
+    });
+  }
+
+  late final _$authenticatedUserNameAtom = Atom(
+    name: 'LoginStoreBase.authenticatedUserName',
+    context: context,
+  );
+
+  @override
+  String? get authenticatedUserName {
+    _$authenticatedUserNameAtom.reportRead();
+    return super.authenticatedUserName;
+  }
+
+  @override
+  set authenticatedUserName(String? value) {
+    _$authenticatedUserNameAtom.reportWrite(
+      value,
+      super.authenticatedUserName,
+      () {
+        super.authenticatedUserName = value;
+      },
+    );
+  }
+
+  late final _$submitAsyncAction = AsyncAction(
+    'LoginStoreBase.submit',
+    context: context,
+  );
+
+  @override
+  Future<bool> submit() {
+    return _$submitAsyncAction.run(() => super.submit());
+  }
+
   late final _$LoginStoreBaseActionController = ActionController(
     name: 'LoginStoreBase',
     context: context,
@@ -110,11 +178,26 @@ mixin _$LoginStore on LoginStoreBase, Store {
   }
 
   @override
+  void signOut() {
+    final _$actionInfo = _$LoginStoreBaseActionController.startAction(
+      name: 'LoginStoreBase.signOut',
+    );
+    try {
+      return super.signOut();
+    } finally {
+      _$LoginStoreBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   String toString() {
     return '''
 email: ${email},
 password: ${password},
 isPasswordObscured: ${isPasswordObscured},
+isLoading: ${isLoading},
+errorMessage: ${errorMessage},
+authenticatedUserName: ${authenticatedUserName},
 canSubmit: ${canSubmit}
     ''';
   }

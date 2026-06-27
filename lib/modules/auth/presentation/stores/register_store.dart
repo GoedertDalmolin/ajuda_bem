@@ -1,10 +1,18 @@
 import 'package:mobx/mobx.dart';
 
+import '../../../../core/errors/app_exception.dart';
+import '../../domain/entities/register_user_params.dart';
+import '../../domain/usecases/register_user_usecase.dart';
+
 part 'register_store.g.dart';
 
 class RegisterStore = RegisterStoreBase with _$RegisterStore;
 
 abstract class RegisterStoreBase with Store {
+  RegisterStoreBase(this._registerUser);
+
+  final RegisterUserUsecase _registerUser;
+
   @observable
   String name = '';
 
@@ -29,6 +37,12 @@ abstract class RegisterStoreBase with Store {
   @observable
   bool acceptedTerms = false;
 
+  @observable
+  bool isLoading = false;
+
+  @observable
+  String? errorMessage;
+
   @computed
   bool get passwordsMatch =>
       password.isNotEmpty &&
@@ -41,7 +55,8 @@ abstract class RegisterStoreBase with Store {
       email.isNotEmpty &&
       phone.isNotEmpty &&
       passwordsMatch &&
-      acceptedTerms;
+      acceptedTerms &&
+      !isLoading;
 
   @action
   void setName(String value) {
@@ -81,5 +96,46 @@ abstract class RegisterStoreBase with Store {
   @action
   void setAcceptedTerms(bool value) {
     acceptedTerms = value;
+  }
+
+  @action
+  Future<bool> submit() async {
+    if (!canSubmit) {
+      return false;
+    }
+
+    isLoading = true;
+    errorMessage = null;
+
+    try {
+      await _registerUser(
+        RegisterUserParams(
+          name: name,
+          email: email,
+          phone: phone,
+          password: password,
+        ),
+      );
+      return true;
+    } on AppException catch (error) {
+      errorMessage = error.message;
+      return false;
+    } catch (_) {
+      errorMessage = 'Não foi possível realizar o cadastro.';
+      return false;
+    } finally {
+      isLoading = false;
+    }
+  }
+
+  @action
+  void clear() {
+    name = '';
+    email = '';
+    phone = '';
+    password = '';
+    confirmPassword = '';
+    acceptedTerms = false;
+    errorMessage = null;
   }
 }

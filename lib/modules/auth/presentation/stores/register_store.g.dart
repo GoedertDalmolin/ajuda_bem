@@ -172,6 +172,52 @@ mixin _$RegisterStore on RegisterStoreBase, Store {
     });
   }
 
+  late final _$isLoadingAtom = Atom(
+    name: 'RegisterStoreBase.isLoading',
+    context: context,
+  );
+
+  @override
+  bool get isLoading {
+    _$isLoadingAtom.reportRead();
+    return super.isLoading;
+  }
+
+  @override
+  set isLoading(bool value) {
+    _$isLoadingAtom.reportWrite(value, super.isLoading, () {
+      super.isLoading = value;
+    });
+  }
+
+  late final _$errorMessageAtom = Atom(
+    name: 'RegisterStoreBase.errorMessage',
+    context: context,
+  );
+
+  @override
+  String? get errorMessage {
+    _$errorMessageAtom.reportRead();
+    return super.errorMessage;
+  }
+
+  @override
+  set errorMessage(String? value) {
+    _$errorMessageAtom.reportWrite(value, super.errorMessage, () {
+      super.errorMessage = value;
+    });
+  }
+
+  late final _$submitAsyncAction = AsyncAction(
+    'RegisterStoreBase.submit',
+    context: context,
+  );
+
+  @override
+  Future<bool> submit() {
+    return _$submitAsyncAction.run(() => super.submit());
+  }
+
   late final _$RegisterStoreBaseActionController = ActionController(
     name: 'RegisterStoreBase',
     context: context,
@@ -274,6 +320,18 @@ mixin _$RegisterStore on RegisterStoreBase, Store {
   }
 
   @override
+  void clear() {
+    final _$actionInfo = _$RegisterStoreBaseActionController.startAction(
+      name: 'RegisterStoreBase.clear',
+    );
+    try {
+      return super.clear();
+    } finally {
+      _$RegisterStoreBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   String toString() {
     return '''
 name: ${name},
@@ -284,6 +342,8 @@ confirmPassword: ${confirmPassword},
 isPasswordObscured: ${isPasswordObscured},
 isConfirmPasswordObscured: ${isConfirmPasswordObscured},
 acceptedTerms: ${acceptedTerms},
+isLoading: ${isLoading},
+errorMessage: ${errorMessage},
 passwordsMatch: ${passwordsMatch},
 canSubmit: ${canSubmit}
     ''';

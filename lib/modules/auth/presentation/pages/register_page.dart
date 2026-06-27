@@ -4,6 +4,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../../../core/routes/app_routes.dart';
 import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/app_text_field.dart';
 import '../../../../core/widgets/auth_app_bar.dart';
@@ -119,9 +120,26 @@ class RegisterPage extends StatelessWidget {
                     ),
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(24, 0, 24, 54),
-                  child: AppPrimaryButton(label: 'Cadastrar', onPressed: () {}),
+                Observer(
+                  builder: (_) => Padding(
+                    padding: const EdgeInsets.fromLTRB(24, 0, 24, 54),
+                    child: AppPrimaryButton(
+                      label: store.isLoading ? 'Cadastrando...' : 'Cadastrar',
+                      onPressed: store.canSubmit
+                          ? () => _submit(context, store)
+                          : null,
+                      icon: store.isLoading
+                          ? const SizedBox(
+                              width: 16,
+                              height: 16,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Colors.white,
+                              ),
+                            )
+                          : null,
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -129,6 +147,27 @@ class RegisterPage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future<void> _submit(BuildContext context, RegisterStore store) async {
+    final success = await store.submit();
+
+    if (!context.mounted) {
+      return;
+    }
+
+    final message = success
+        ? 'Cadastro realizado com sucesso!'
+        : store.errorMessage ?? 'Não foi possível realizar o cadastro.';
+
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text(message)));
+
+    if (success) {
+      store.clear();
+      Modular.to.navigate(AppRoutes.auth);
+    }
   }
 }
 
