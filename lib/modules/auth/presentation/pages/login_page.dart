@@ -23,7 +23,9 @@ class LoginPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: const AuthAppBar(),
-      bottomNavigationBar: const _LoginBottomNavigation(),
+      bottomNavigationBar: _LoginBottomNavigation(
+        onRegister: () => _openRegistrationMenu(context, store),
+      ),
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(
@@ -180,12 +182,29 @@ class LoginPage extends StatelessWidget {
       ..hideCurrentSnackBar()
       ..showSnackBar(SnackBar(content: Text(message)));
   }
+
+  void _openRegistrationMenu(BuildContext context, LoginStore store) {
+    if (store.isAuthenticated) {
+      Modular.to.navigate(AppRoutes.registrationMenu);
+      return;
+    }
+
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        const SnackBar(
+          content: Text('Faça login para acessar o menu de cadastro.'),
+        ),
+      );
+  }
 }
 
 class _LoginBottomNavigation extends StatelessWidget {
-  const _LoginBottomNavigation();
+  const _LoginBottomNavigation({required this.onRegister});
 
   static const _unselectedColor = Color(0xFF494949);
+
+  final VoidCallback onRegister;
 
   @override
   Widget build(BuildContext context) {
@@ -221,7 +240,7 @@ class _LoginBottomNavigation extends StatelessWidget {
               _LoginNavigationItem(
                 iconAsset: 'assets/icons/navigation/add.svg',
                 label: 'Cadastro',
-                onTap: () => Modular.to.pushNamed(AppRoutes.register),
+                onTap: onRegister,
               ),
             ],
           ),

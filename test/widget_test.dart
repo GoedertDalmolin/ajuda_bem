@@ -46,6 +46,15 @@ void main() {
     expect(welcome.style?.letterSpacing, 0);
     expect(welcome.style?.color, const Color(0xFF04957C));
 
+    await tester.tap(find.text('Cadastro'));
+    await tester.pumpAndSettle();
+
+    expect(
+      find.text('Faça login para acessar o menu de cadastro.'),
+      findsOneWidget,
+    );
+    expect(find.text('Seja bem-vindo ao AjudaBem!'), findsOneWidget);
+
     final enter = tester.widget<Text>(find.text('Entrar'));
     expect(enter.style?.fontFamily, contains('Manrope'));
     expect(enter.style?.fontSize, 16);

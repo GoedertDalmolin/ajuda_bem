@@ -54,7 +54,7 @@ class _ProfilePageState extends State<ProfilePage> {
       bottomNavigationBar: AppBottomNavigation(
         key: const Key('profile_bottom_navigation'),
         currentItem: AppNavigationItem.profile,
-        onRegister: () => Modular.to.pushNamed(AppRoutes.register),
+        onRegister: () => Modular.to.navigate(AppRoutes.registrationMenu),
       ),
       body: SafeArea(
         top: false,
@@ -106,24 +106,26 @@ class _ProfileContent extends StatelessWidget {
           const SizedBox(height: 30),
           const _SectionTitle('Utilitários'),
           const SizedBox(height: 10),
-          const Row(
+          Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
                 child: _UtilityItem(
+                  key: const Key('registered_people_option'),
                   iconAsset: 'assets/icons/profile/registered_people.svg',
                   label: 'Pessoas\nCadastradas',
+                  onTap: () => Modular.to.pushNamed(AppRoutes.assistedPeople),
                 ),
               ),
-              SizedBox(width: 9),
-              Expanded(
+              const SizedBox(width: 9),
+              const Expanded(
                 child: _UtilityItem(
                   iconAsset: 'assets/icons/profile/ong_validation.svg',
                   label: 'Validação para\nONG’s',
                 ),
               ),
-              SizedBox(width: 9),
-              Expanded(
+              const SizedBox(width: 9),
+              const Expanded(
                 child: _UtilityItem(
                   iconAsset: 'assets/icons/profile/volunteer.png',
                   isRaster: true,
@@ -259,41 +261,48 @@ class _UtilityItem extends StatelessWidget {
   const _UtilityItem({
     required this.iconAsset,
     required this.label,
+    super.key,
     this.isRaster = false,
+    this.onTap,
   });
 
   final String iconAsset;
   final String label;
   final bool isRaster;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          height: 68,
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.primary,
-            borderRadius: BorderRadius.circular(6),
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(6),
+      child: Column(
+        children: [
+          Container(
+            height: 68,
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.primary,
+              borderRadius: BorderRadius.circular(6),
+            ),
+            alignment: Alignment.center,
+            child: isRaster
+                ? Image.asset(iconAsset, width: 48, height: 48)
+                : SvgPicture.asset(iconAsset, width: 43, height: 43),
           ),
-          alignment: Alignment.center,
-          child: isRaster
-              ? Image.asset(iconAsset, width: 48, height: 48)
-              : SvgPicture.asset(iconAsset, width: 43, height: 43),
-        ),
-        const SizedBox(height: 5),
-        Text(
-          label,
-          textAlign: TextAlign.center,
-          style: GoogleFonts.manrope(
-            color: Colors.black,
-            fontSize: 12,
-            height: 1.15,
-            fontWeight: FontWeight.w800,
-            letterSpacing: 0,
+          const SizedBox(height: 5),
+          Text(
+            label,
+            textAlign: TextAlign.center,
+            style: GoogleFonts.manrope(
+              color: Colors.black,
+              fontSize: 12,
+              height: 1.15,
+              fontWeight: FontWeight.w800,
+              letterSpacing: 0,
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

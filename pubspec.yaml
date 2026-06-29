@@ -63,6 +63,7 @@ flutter:
   uses-material-design: true
 
   assets:
+    - assets/images/forms/person.png
     - assets/icons/google_icon.svg
     - assets/icons/navigation/add.svg
     - assets/icons/navigation/heart.svg
